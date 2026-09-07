@@ -1,0 +1,33 @@
+# wknita.com — статика (Apache)
+Options -Indexes
+DirectoryIndex index.html
+
+# index.html → / (канон чистый, без дубля /index.html)
+RewriteEngine On
+RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html[\s?] [NC]
+RewriteRule ^(.*/)?index\.html$ /$1 [R=301,L]
+
+# 404
+ErrorDocument 404 /index.html
+
+# gzip
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+# cache статики
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/webp        "access plus 1 month"
+  ExpiresByType image/jpeg        "access plus 1 month"
+  ExpiresByType image/png         "access plus 1 month"
+  ExpiresByType image/svg+xml     "access plus 1 month"
+  ExpiresByType text/css          "access plus 1 week"
+  ExpiresByType application/javascript "access plus 1 week"
+</IfModule>
+
+# безопасные заголовки
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+</IfModule>
